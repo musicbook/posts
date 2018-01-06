@@ -1,5 +1,6 @@
 package com.fri.musicbook;
 
+import com.kumuluz.ee.logs.cdi.Log;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 
 import javax.inject.Inject;
@@ -14,7 +15,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("posts/")
-@Metered(name = "UserResources")
+@Metered(name = "PostResources")
+@Log
 public class PostsResource {
 
     //to get travis started
