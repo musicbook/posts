@@ -1,5 +1,7 @@
 package com.fri.musicbook;
 
+import org.eclipse.microprofile.metrics.annotation.Metered;
+
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -12,6 +14,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("posts/")
+@Metered(name = "UserResources")
 public class PostsResource {
 
     //to get travis started
@@ -30,7 +33,7 @@ public class PostsResource {
         if (PostsBean.setBandPosts(bandId,messages)){
             return Response.status(Response.Status.CREATED).entity(messages).build();
         }
-        return Response.status( Response.Status.CONFLICT).build();
+        return Response.status( Response.Status.NOT_FOUND).build();
     }
 
     @GET

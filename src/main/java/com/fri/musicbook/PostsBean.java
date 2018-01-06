@@ -10,6 +10,7 @@ public class PostsBean {
 
     public static boolean setBandPosts(String bandId, List<String> newPosts){
         List<String> oldPosts= PostsDB.getBandPosts(bandId);
+        if(oldPosts == null) return false;
         oldPosts.addAll(newPosts);
         return PostsDB.setBandPosts(bandId,oldPosts);
     }
@@ -30,7 +31,9 @@ public class PostsBean {
             real_max=posts.size()-1;
         }
         for(int i=min; i<=real_max; i++){
-            returnPosts.add(posts.get(i));
+            try {
+                if (posts.get(i) != null) returnPosts.add(posts.get(i));
+            }catch (Exception e){}
         }
         return returnPosts;
     }
