@@ -5,6 +5,7 @@ import java.util.List;
 
 public class PostsDB {
     private static List<Post> bandPostDB = new ArrayList<Post>(){{
+        add(new Post(0,"0")); // for testing
         add(new Post(1,"1"));
         add(new Post(2,"2"));
     }};

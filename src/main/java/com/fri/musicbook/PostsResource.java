@@ -49,4 +49,13 @@ public class PostsResource {
         return Response.status( Response.Status.CONFLICT).build();
     }
 
+    @DELETE
+    @Path("bandId/{bandId}")
+    public Response deleteBandPost(@PathParam("bandId") String bandId){
+        if(PostsBean.deleteBandPost(bandId)){
+            return Response.ok().build();
+        }
+        return Response.status(Response.Status.CONFLICT).build();
+    }
+
 }

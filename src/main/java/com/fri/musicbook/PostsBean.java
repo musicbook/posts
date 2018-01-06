@@ -48,4 +48,9 @@ public class PostsBean {
     }
 
 
+    public static boolean deleteBandPost(String bandId){
+        return PostsDB.removeBandPost(bandId);
+    }
+
+
 }
