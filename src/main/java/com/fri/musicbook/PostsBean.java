@@ -41,7 +41,7 @@ public class PostsBean {
     public static boolean createBandPost(Post bandpost) {
         if ((bandpost.getBandId() != null && !bandpost.getBandId().equals("")) &&
              PostsDB.getBandPosts(bandpost.getBandId())==null){
-            if(PostsDB.getBandPosts(bandpost.getBandId())==null) System.out.println("JE NULL");
+
             List<Post> bandposts = PostsDB.getAllBandPosts();
             bandpost.setId(bandposts.get(bandposts.size() - 1).getId() + 1);
             PostsDB.addNewBandPost(bandpost);
