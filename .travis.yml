@@ -19,4 +19,4 @@ script:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker push cleptes/posts:0.01
+  - docker push cleptes/posts:0.02
