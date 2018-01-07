@@ -18,7 +18,7 @@ spec:
             - name: POSTGRESQL_PASSWORD
               value: postgres
             - name: POSTGRESQL_DATABASE
-              value: users
+              value: posts
           ports:
           - containerPort: 5432
             protocol: TCP
