@@ -1,61 +1,96 @@
 package com.fri.musicbook;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
-
+@RequestScoped
 public class PostsDB {
-    private static List<Post> bandPostDB = new ArrayList<Post>(){{
-        add(new Post(0,"0")); // for testing
-        add(new Post(1,"1"));
-        add(new Post(2,"2"));
-    }};
+    @PersistenceContext(unitName = "posts-jpa")
+    private EntityManager em;
 
-    public static boolean setBandPosts(String bandId,List<String> posts){
-        for(Post bandPost : bandPostDB){
-            if(bandPost.getBandId().equals(bandId)){
-                bandPost.setBandPosts(posts);
-                return true;
-            }
-        }
-        return false;
+    private ObjectMapper objectMapper;
+
+    public PostsDB() {
     }
 
-    public static List<Post> getAllBandPosts() {
-        return bandPostDB;
+    public boolean setBandPosts(String bandId,List<String> posts){
+        Post a=em.find(Post.class,bandId);
+        if(a == null) return false;
+        a.setBandPosts(posts);
+        try {
+            beginTx();
+            em.merge(a);
+            commitTx();
+        } catch (Exception e) {
+            rollbackTx();
+            return false;
+        }
+
+        return true;
     }
 
-    public static List<String> getBandPosts(String bandId){
-        for(Post post : bandPostDB){
-            if(post.getBandId().equals(bandId)){
-                return post.getBandPosts();
-            }
-        }
+    public List<Post> getAllBandPosts() {
+        Query query=em.createNamedQuery("posts.getAll",Post.class);
+        List<Post> test = query.getResultList();
+        if(test==null) System.out.println("IM EMPTY");
+        System.out.println(test);
+        return test;
+    }
+
+    public List<String> getBandPosts(String bandId){
+        Post post = em.find(Post.class,bandId);
+        if(post!=null) return post.getBandPosts();
         return null;
     }
 
-    public static boolean addBandPost(String bandId,String post){
-        for(Post bandPost : bandPostDB){
-            if(bandPost.getBandId().equals(bandId)){
-                bandPost.addBandPost(post);
-                return true;
-            }
+    public boolean addNewBandPost(Post post){
+
+        try {
+            beginTx();
+            em.persist(post);
+            commitTx();
+        } catch (Exception e) {
+            rollbackTx();
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public static void addNewBandPost(Post post){
-        bandPostDB.add(post);
-    }
-
-    public static boolean removeBandPost(String bandId){
-        for(Post bandPost : bandPostDB){
-            if(bandPost.getBandId().equals(bandId)) {
-                bandPostDB.remove(bandPost);
-                return true;
+    public boolean removeBandPost(String bandId){
+        Post bandPost=em.find(Post.class,bandId);
+        if(bandPost!=null) {
+            try {
+                beginTx();
+                em.remove(bandPost);
+                commitTx();
+            } catch (Exception e) {
+                rollbackTx();
+                return false;
             }
-        }
-        return false;
+        }else return false;
+
+        return true;
     }
 
+
+    private void beginTx() {
+        if (!em.getTransaction().isActive())
+            em.getTransaction().begin();
+    }
+
+    private void commitTx() {
+        if (em.getTransaction().isActive())
+            em.getTransaction().commit();
+    }
+
+    private void rollbackTx() {
+        if (em.getTransaction().isActive())
+            em.getTransaction().rollback();
+    }
 
 }

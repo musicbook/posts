@@ -1,30 +1,38 @@
 package com.fri.musicbook;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-
+@ApplicationScoped
 public class PostsBean {
-    public static List<Post> getAllPosts(){
-        return PostsDB.getAllBandPosts();
+    @Inject
+    private PostsDB postsDB;
+
+    public PostsBean() {
     }
 
-    public static boolean setBandPosts(String bandId, List<String> newPosts){
-        List<String> oldPosts= PostsDB.getBandPosts(bandId);
+    public List<Post> getAllPosts(){
+        return postsDB.getAllBandPosts();
+    }
+
+    public boolean setBandPosts(String bandId, List<String> newPosts){
+        List<String> oldPosts= postsDB.getBandPosts(bandId);
         if(oldPosts == null) return false;
         oldPosts.addAll(newPosts);
-        return PostsDB.setBandPosts(bandId,oldPosts);
+        return postsDB.setBandPosts(bandId,oldPosts);
     }
 
-    public static List<String> getBandPosts(String bandId,String lt_gt_eq,int no){
+    public List<String> getBandPosts(String bandId,String lt_gt_eq,int no){
         switch (lt_gt_eq){
-            case "EQ" : return getBandPosts_engine(PostsDB.getBandPosts(bandId), no,no);
-            case "LT" : return getBandPosts_engine(PostsDB.getBandPosts(bandId), 0,no-1);
-            case "GT" : return getBandPosts_engine(PostsDB.getBandPosts(bandId), no+1,-1);
+            case "EQ" : return getBandPosts_engine(postsDB.getBandPosts(bandId), no,no);
+            case "LT" : return getBandPosts_engine(postsDB.getBandPosts(bandId), 0,no-1);
+            case "GT" : return getBandPosts_engine(postsDB.getBandPosts(bandId), no+1,-1);
             default   : return new ArrayList<String>();
         }
     }
 
-    private static List<String> getBandPosts_engine(List<String> posts,int min, int max){
+    private List<String> getBandPosts_engine(List<String> posts,int min, int max){
         List<String> returnPosts = new ArrayList<>();
         int real_max=max;
         if (max == -1){
@@ -38,21 +46,18 @@ public class PostsBean {
         return returnPosts;
     }
 
-    public static boolean createBandPost(Post bandpost) {
+    public boolean createBandPost(Post bandpost) {
         if ((bandpost.getBandId() != null && !bandpost.getBandId().equals("")) &&
-             PostsDB.getBandPosts(bandpost.getBandId())==null){
-
-            List<Post> bandposts = PostsDB.getAllBandPosts();
-            bandpost.setId(bandposts.get(bandposts.size() - 1).getId() + 1);
-            PostsDB.addNewBandPost(bandpost);
+                postsDB.getBandPosts(bandpost.getBandId())==null){
+            postsDB.addNewBandPost(bandpost);
             return true;
         }
         return false;
     }
 
 
-    public static boolean deleteBandPost(String bandId){
-        return PostsDB.removeBandPost(bandId);
+    public boolean deleteBandPost(String bandId){
+        return postsDB.removeBandPost(bandId);
     }
 
 

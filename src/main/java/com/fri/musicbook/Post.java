@@ -1,27 +1,31 @@
 package com.fri.musicbook;
 
+import org.eclipse.persistence.annotations.UuidGenerator;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity(name = "posts")
+@NamedQueries(value =
+        {
+                @NamedQuery(name = "posts.getAll", query = "SELECT o FROM posts o"),
+                @NamedQuery(name = "posts.getBandPost", query = "SELECT o FROM posts o WHERE o.bandId = :bandId")
+        })
+@UuidGenerator(name = "idGenerator")
 public class Post {
-    private int id;
+    @Id
+    @Column(name = "bandId")
     private String bandId;
+
+    @ElementCollection
+    @Column(name = "bandPosts")
     private List<String> bandPosts= new ArrayList<>();
 
     public Post() {
     }
 
-    public Post(int id, String bandId) {
-        this.id = id;
+    public Post(String bandId) {
         this.bandId = bandId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getBandId() {

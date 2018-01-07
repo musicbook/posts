@@ -15,7 +15,7 @@ cache:
 
 script:
   - mvn clean package -U
-  - docker build -t cleptes/posts:0.01 .
+  - docker build -t cleptes/posts:0.02 .
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
